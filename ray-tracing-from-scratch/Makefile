@@ -1,15 +1,15 @@
 output: main.o painter.o
 	g++ -std=c++0x -Wall main.o painter.o -o output
 
-main.o: main.cc sphere.o canvas.o
+main.o: main.cc util.o
 	g++ -c main.cc
 
-sphere.o: sphere.h canvas.o
-
-painter.o: painter.cc painter.h canvas.o
+painter.o: painter.cc painter.h scene.o util.o
 	g++ -c painter.cc
 
-canvas.o: canvas.h
+scene.o: scene.h
+
+util.o: util.h
 
 clean:
 	rm *.o output
