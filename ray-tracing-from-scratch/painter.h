@@ -1,10 +1,6 @@
 #include <iostream>
 
-struct PixelColor {
-    int r;
-    int g;
-    int b;
-};
+#include "canvas.h"
 
 class Painter {
     public:
@@ -14,7 +10,7 @@ class Painter {
             file_name_ = file_name;
             for (int i = 0; i < image_height; i++) {
                 for (int j = 0; j < image_width; j++) {
-                    pixel_colors.push_back((PixelColor){255, 0, 255});
+                    pixel_colors.push_back((Color){255, 0, 255});
                 }
             }
         };
@@ -25,5 +21,5 @@ class Painter {
         int image_width_;
         int image_height_;
         std::string file_name_;
-        std::vector<PixelColor> pixel_colors;
+        std::vector<Color> pixel_colors;
 };
