@@ -6,7 +6,7 @@
 void Painter::OutputImage() {
     std::ofstream f(file_name_, std::ofstream::trunc);
     f << "P3\n";
-    f << image_height_ << " " << image_width_ << "\n";
+    f << image_width_ << " " << image_height_ << "\n";
     f << "255\n";
     for (int i = 0; i < image_height_; i++) {
         f << "\n";

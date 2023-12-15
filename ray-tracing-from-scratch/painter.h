@@ -14,7 +14,7 @@ class Painter {
             file_name_ = file_name;
             for (int i = 0; i < image_height; i++) {
                 for (int j = 0; j < image_width; j++) {
-                    pixel_colors.push_back((PixelColor){255, 255, 255});
+                    pixel_colors.push_back((PixelColor){255, 0, 255});
                 }
             }
         };
