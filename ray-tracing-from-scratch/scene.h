@@ -5,8 +5,9 @@
 
 struct Sphere {
     float radius;
-    Coord3d center;
+    Vec3 center;
     Color color;
+    std::string name;
 };
 
 struct Scene {

@@ -7,13 +7,13 @@ struct Color {
     int b;
 };
 
-struct Coord3d {
+struct Vec3 {
     float x;
     float y;
     float z;
 };
 
-struct Coord2d {
+struct Vec2 {
     float x;
     float y;
 };

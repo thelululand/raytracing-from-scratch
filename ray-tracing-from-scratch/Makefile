@@ -1,11 +1,11 @@
 output: main.o painter.o
-	g++ -std=c++0x -Wall main.o painter.o -o output
+	g++ -std=c++17 -Wall main.o painter.o -o output
 
 main.o: main.cc util.o
-	g++ -c main.cc
+	g++ -std=c++17 -c main.cc
 
 painter.o: painter.cc painter.h scene.o util.o
-	g++ -c painter.cc
+	g++ -std=c++17 -c painter.cc
 
 scene.o: scene.h
 

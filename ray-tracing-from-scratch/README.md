@@ -3,5 +3,5 @@
 Command
 
 ```cc
-make output && ./output && open image.ppm && make clean
+rm -f image.ppm && make output && ./output && open image.ppm && make clean
 ```
