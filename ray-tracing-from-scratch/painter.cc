@@ -59,7 +59,8 @@ void Painter::SetOrigin(Vec3 origin) {
 
 void Painter::FetchImage() {
     pixel_colors.clear();
-    for (int y = -canvas_.height/2; y < canvas_.height/2; y++) {
+    // We need to start from positive height because PPM image file starts with upper left.
+    for (int y = canvas_.height/2; y > -canvas_.height/2; y--) {
         for (int x = -canvas_.width/2; x < canvas_.width/2; x++) {
             Vec3 pixel_viewport_pos = CanvasToViewport((Vec2){(float)x, (float)y});
             pixel_colors.push_back(TraceRay(origin_, pixel_viewport_pos, 1, std::numeric_limits<float>::max()));
