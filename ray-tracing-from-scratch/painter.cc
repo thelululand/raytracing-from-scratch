@@ -7,18 +7,9 @@
 #include "painter.h"
 #include "util.h"
 #include "scene.h"
+#include "vec3.h"
 
 namespace {
-
-// a dot b
-double dot(Vec3 a, Vec3 b) {
-    return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
-}
-
-// a - b
-Vec3 subtract(Vec3 a, Vec3 b) {
-    return (Vec3){a.x - b.x, a.y - b.y, a.z - b.z};
-}
 
 } // namespace
 
@@ -53,7 +44,7 @@ void Painter::SetScene(Scene scene) {
     scene_ = scene;
 }
 
-void Painter::SetOrigin(Vec3 origin) {
+void Painter::SetOrigin(vec3 origin) {
     origin_ = origin;
 }
 
@@ -62,20 +53,20 @@ void Painter::FetchImage() {
     // We need to start from positive height because PPM image file starts with upper left.
     for (int y = canvas_.height/2; y > -canvas_.height/2; y--) {
         for (int x = -canvas_.width/2; x < canvas_.width/2; x++) {
-            Vec3 pixel_viewport_pos = CanvasToViewport((Vec2){(double)x, (double)y});
+            vec3 pixel_viewport_pos = CanvasToViewport((Vec2){(double)x, (double)y});
             pixel_colors.push_back(TraceRay(origin_, pixel_viewport_pos, 1, std::numeric_limits<double>::max()));
         }
     }
     return;
 }
 
-void Painter::DebugTraceRay(Vec3 pixel_viewport_pos) {
+void Painter::DebugTraceRay(vec3 pixel_viewport_pos) {
     Color color = TraceRay(origin_, pixel_viewport_pos, 1, std::numeric_limits<double>::max());
     std::cout << "\nCOLOR: " << color.r << " " << color.g << " " << color.b;
 }
 
 Color Painter::TraceRay(
-    Vec3 origin, Vec3 pixel_viewport_pos, double t_min, double t_max) {
+    vec3 origin, vec3 pixel_viewport_pos, double t_min, double t_max) {
     double closest_t = std::numeric_limits<double>::max();
     std::optional<Sphere> closest_sphere;
     for (Sphere sphere : scene_.spheres) {
@@ -96,16 +87,17 @@ Color Painter::TraceRay(
     if (!closest_sphere.has_value()) {
         return BACKGROUND_COLOR;
     }
+    // vec3 point = origin + closest_t *  d); // intersection
     return closest_sphere->color;
 }
 
 
 std::pair<double, double> Painter::IntersectRaySphere(
-    Vec3 origin, Vec3 pixel_viewport_pos, Sphere sphere) {
+    vec3 origin, vec3 pixel_viewport_pos, Sphere sphere) {
     std::pair<double, double> intersections;
 
     double r = sphere.radius;
-    Vec3 center_to_origin = subtract(origin, sphere.center);
+    vec3 center_to_origin = origin - sphere.center;
 
     double a = dot(pixel_viewport_pos, pixel_viewport_pos);
     double b = 2 * dot(center_to_origin, pixel_viewport_pos);
@@ -123,9 +115,30 @@ std::pair<double, double> Painter::IntersectRaySphere(
     return intersections;
 }
 
-Vec3 Painter::CanvasToViewport(Vec2 pixel_position) {
-    return (Vec3){
+vec3 Painter::CanvasToViewport(Vec2 pixel_position) {
+    return (vec3){
         (pixel_position.x/canvas_.width) * viewport_.width,
         (pixel_position.y/canvas_.height) * viewport_.height,
         viewport_.d};
+}
+
+double Painter::ComputeLighting(vec3 point, vec3 normal) {
+    double intensity = 0;
+    for (Light light : scene_.lights) {
+        if (light.type == AMBIENT) {
+            intensity += light.intensity;
+        } else {
+            vec3 direction;
+            if (light.type == POINT) {
+                direction = light.position -point;
+            } else {
+                direction = light.direction;
+            }
+            double normal_dot_direction = dot(normal, direction);
+            if (normal_dot_direction > 0) {
+                intensity += (light.intensity * normal_dot_direction/(normal.length() * direction.length()));
+            }
+        }
+    }
+    return intensity;
 }

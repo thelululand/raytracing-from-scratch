@@ -7,12 +7,6 @@ struct Color {
     int b;
 };
 
-struct Vec3 {
-    double x;
-    double y;
-    double z;
-};
-
 struct Vec2 {
     double x;
     double y;
