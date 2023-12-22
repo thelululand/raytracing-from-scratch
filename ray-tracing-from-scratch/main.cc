@@ -43,6 +43,23 @@ int main() {
     scene.spheres.push_back(sphere2);
     scene.spheres.push_back(sphere3);
     scene.spheres.push_back(sphere4);
+
+    Light light1;
+    light1.type = AMBIENT;
+    light1.intensity = 0.2;
+    scene.lights.push_back(light1);
+
+    Light light2;
+    light2.type = POINT;
+    light2.intensity = 0.6;
+    light2.position = vec3(2, 1, 0);
+    scene.lights.push_back(light2);
+
+    Light light3;
+    light3.type = DIRECTIONAL;
+    light3.intensity = 0.2;
+    light3.direction = vec3(1, 4, 4);
+    scene.lights.push_back(light3);
     
     painter.SetScene(scene);
 

@@ -11,6 +11,14 @@
 
 namespace {
 
+Color mul(Color color, double i) {
+    return (Color){(int) (color.r * i), (int) (color.g * i), (int) (color.b * i)};
+}
+
+Color mul(double i, Color color) {
+    return mul(color, i);
+}
+
 } // namespace
 
 
@@ -87,8 +95,11 @@ Color Painter::TraceRay(
     if (!closest_sphere.has_value()) {
         return BACKGROUND_COLOR;
     }
-    // vec3 point = origin + closest_t *  d); // intersection
-    return closest_sphere->color;
+    vec3 direction = pixel_viewport_pos - origin;
+    vec3 point = origin + closest_t *  direction; // intersection
+    vec3 normal = point - closest_sphere->center; 
+    normal = normal / normal.length();
+    return mul(closest_sphere->color, ComputeLighting(point, normal));
 }
 
 
