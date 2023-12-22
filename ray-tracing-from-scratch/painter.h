@@ -28,10 +28,10 @@ class Painter {
         void FetchImage();
         
         // Returns a color of the ray tracing result.
-        Color TraceRay(Vec3 origin, Vec3 viewport_position, float t_min, float t_max);
+        Color TraceRay(Vec3 origin, Vec3 viewport_position, double t_min, double t_max);
 
         // Returns an intersection between the ray and the sphere.
-        std::pair<float, float> IntersectRaySphere(Vec3 origin, Vec3 pixel_viewport_pos, Sphere sphere);
+        std::pair<double, double> IntersectRaySphere(Vec3 origin, Vec3 pixel_viewport_pos, Sphere sphere);
         
         // Converts the x, y coordidate in the canvas to the viewport coordidate.
         Vec3 CanvasToViewport(Vec2 coord2d);

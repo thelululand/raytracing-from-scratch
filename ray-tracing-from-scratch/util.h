@@ -8,25 +8,25 @@ struct Color {
 };
 
 struct Vec3 {
-    float x;
-    float y;
-    float z;
+    double x;
+    double y;
+    double z;
 };
 
 struct Vec2 {
-    float x;
-    float y;
+    double x;
+    double y;
 };
 
 struct Canvas {
-    float width;
-    float height;
+    double width;
+    double height;
 };
 
 struct Viewport {
-    float width;
-    float height;
+    double width;
+    double height;
     // z-coordidate of the viewport
-    float d;
+    double d;
 };
 #endif
