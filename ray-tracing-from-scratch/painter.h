@@ -43,7 +43,7 @@ class Painter {
         vec3 CanvasToViewport(Vec2 coord2d);
 
         // Returns the intensity of light at `point`, given a surface `normal`.
-        double ComputeLighting(vec3 point, vec3 normal);
+        double ComputeLighting(vec3 point, vec3 normal, vec3 inverse_ray, double specular);
 
         Canvas canvas_;
         Viewport viewport_;

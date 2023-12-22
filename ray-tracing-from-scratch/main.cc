@@ -13,53 +13,55 @@ int main() {
         (Canvas){image_width, image_height},
         /*file_name=*/"image.ppm",
         (Viewport){1,1,1});
+    Scene scene;
 
-    Sphere sphere1;
-    sphere1.name = "sphere1";
-    sphere1.radius = 1.0f;
-    sphere1.color = (Color){0, 0, 255}; // blue
-    sphere1.center = vec3(2.0f, 0.0f, 4.0f);
+    Sphere red_sphere;
+    red_sphere.name = "red_sphere";
+    red_sphere.radius = 1.0f;
+    red_sphere.color = (Color){255, 0, 0}; // red
+    red_sphere.center = vec3(0.0f, -1.0f, 3.0f);
+    red_sphere.specular = 500; // Shiny
+    scene.spheres.push_back(red_sphere);
 
-    Sphere sphere2;
-    sphere2.name = "sphere2";
-    sphere2.radius = 1.0f;
-    sphere2.color = (Color){0, 255, 0}; // green
-    sphere2.center = vec3(-2.0f, 0.0f, 4.0f);
+    Sphere blue_sphere;
+    blue_sphere.name = "blue_sphere";
+    blue_sphere.radius = 1.0f;
+    blue_sphere.color = (Color){0, 0, 255}; // blue
+    blue_sphere.center = vec3(2.0f, 0.0f, 4.0f);
+    blue_sphere.specular = 500; // Shiny
+    scene.spheres.push_back(blue_sphere);
 
-    Sphere sphere3;
-    sphere3.name = "sphere3";
-    sphere3.radius = 1.0f;
-    sphere3.color = (Color){255, 0, 0}; // red
-    sphere3.center = vec3(0.0f, -1.0f, 3.0f);
+    Sphere green_sphere;
+    green_sphere.name = "green_sphere";
+    green_sphere.radius = 1.0f;
+    green_sphere.color = (Color){0, 255, 0}; // green
+    green_sphere.center = vec3(-2.0f, 0.0f, 4.0f);
+    green_sphere.specular = 10; // Somewhat shiny
+    scene.spheres.push_back(green_sphere);
 
     Sphere sphere4;
     sphere4.name = "sphere4";
     sphere4.radius = 5000.0f;
     sphere4.color = (Color){255, 255, 0}; // yellow
     sphere4.center = vec3(0.0f, -5001.0f, 0.0f);
-
-    Scene scene;
-    scene.spheres.push_back(sphere1);
-    scene.spheres.push_back(sphere2);
-    scene.spheres.push_back(sphere3);
     scene.spheres.push_back(sphere4);
 
-    Light light1;
-    light1.type = AMBIENT;
-    light1.intensity = 0.2;
-    scene.lights.push_back(light1);
+    Light ambient_light;
+    ambient_light.type = AMBIENT;
+    ambient_light.intensity = 0.2;
+    scene.lights.push_back(ambient_light);
 
-    Light light2;
-    light2.type = POINT;
-    light2.intensity = 0.6;
-    light2.position = vec3(2, 1, 0);
-    scene.lights.push_back(light2);
+    Light point_light;
+    point_light.type = POINT;
+    point_light.intensity = 0.6;
+    point_light.position = vec3(2, 1, 0);
+    scene.lights.push_back(point_light);
 
-    Light light3;
-    light3.type = DIRECTIONAL;
-    light3.intensity = 0.2;
-    light3.direction = vec3(1, 4, 4);
-    scene.lights.push_back(light3);
+    Light directional_light;
+    directional_light.type = DIRECTIONAL;
+    directional_light.intensity = 0.2;
+    directional_light.direction = vec3(1, 4, 4);
+    scene.lights.push_back(directional_light);
     
     painter.SetScene(scene);
 

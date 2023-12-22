@@ -41,7 +41,7 @@ void Painter::OutputImage() {
         f << "\n";
         for (int j = 0; j < canvas_.width; j++) {
             Color p = pixel_colors.at(i * canvas_.height + j);
-            f << p.r  << " " << p.g << " " << p.b << " ";
+            f << std::min(p.r, 255)  << " " << std::min(p.g, 255) << " " << std::min(p.b, 255) << " ";
         }
     }
     f.close();
@@ -81,11 +81,10 @@ Color Painter::TraceRay(
     if (!closest_sphere.has_value()) {
         return BACKGROUND_COLOR;
     }
-    vec3 direction = pixel_viewport_pos - origin;
-    vec3 point = origin + closest_t *  direction; // intersection
+    vec3 point = origin + closest_t *  pixel_viewport_pos; // intersection
     vec3 normal = point - closest_sphere->center; 
     normal = normal / normal.length();
-    return mul(closest_sphere->color, ComputeLighting(point, normal));
+    return mul(closest_sphere->color, ComputeLighting(point, normal, -pixel_viewport_pos, closest_sphere->specular));
 }
 
 std::pair<std::optional<Sphere>, double> Painter::ClosestIntersection(
@@ -141,21 +140,33 @@ vec3 Painter::CanvasToViewport(Vec2 pixel_position) {
         viewport_.d};
 }
 
-double Painter::ComputeLighting(vec3 point, vec3 normal) {
+double Painter::ComputeLighting(vec3 point, vec3 normal, vec3 inverse_ray, double specular) {
     double intensity = 0;
     for (Light light : scene_.lights) {
         if (light.type == AMBIENT) {
             intensity += light.intensity;
         } else {
-            vec3 direction;
+            vec3 light_direction;
             if (light.type == POINT) {
-                direction = light.position -point;
+                light_direction = light.position - point;
             } else {
-                direction = light.direction;
+                light_direction = light.direction;
             }
-            double normal_dot_direction = dot(normal, direction);
+            
+            // Diffuse reflection.
+            double normal_dot_direction = dot(normal, light_direction);
             if (normal_dot_direction > 0) {
-                intensity += (light.intensity * normal_dot_direction/(normal.length() * direction.length()));
+                intensity += (light.intensity * normal_dot_direction/(normal.length() * light_direction.length()));
+            }
+
+            // Specular reflection.
+            if (specular != -1) {
+                vec3 reflection = 2 * normal * dot(normal, light_direction) - light_direction;
+                double ref_dot_inv_ray = dot(reflection, inverse_ray);
+                if (ref_dot_inv_ray > 0) {
+                    intensity +=
+                        (light.intensity * pow(ref_dot_inv_ray/(reflection.length() * inverse_ray.length()), specular));
+                }
             }
         }
     }
