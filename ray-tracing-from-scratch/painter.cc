@@ -75,6 +75,21 @@ void Painter::DebugTraceRay(vec3 pixel_viewport_pos) {
 
 Color Painter::TraceRay(
     vec3 origin, vec3 pixel_viewport_pos, double t_min, double t_max) {
+    auto intersection = ClosestIntersection(origin, pixel_viewport_pos, t_min, t_max);
+    std::optional<Sphere> closest_sphere = intersection.first;
+    double closest_t = intersection.second;
+    if (!closest_sphere.has_value()) {
+        return BACKGROUND_COLOR;
+    }
+    vec3 direction = pixel_viewport_pos - origin;
+    vec3 point = origin + closest_t *  direction; // intersection
+    vec3 normal = point - closest_sphere->center; 
+    normal = normal / normal.length();
+    return mul(closest_sphere->color, ComputeLighting(point, normal));
+}
+
+std::pair<std::optional<Sphere>, double> Painter::ClosestIntersection(
+    vec3 origin, vec3 pixel_viewport_pos, double t_min, double t_max) {
     double closest_t = std::numeric_limits<double>::max();
     std::optional<Sphere> closest_sphere;
     for (Sphere sphere : scene_.spheres) {
@@ -92,16 +107,8 @@ Color Painter::TraceRay(
             closest_t = intersections.second;
         }
     }
-    if (!closest_sphere.has_value()) {
-        return BACKGROUND_COLOR;
-    }
-    vec3 direction = pixel_viewport_pos - origin;
-    vec3 point = origin + closest_t *  direction; // intersection
-    vec3 normal = point - closest_sphere->center; 
-    normal = normal / normal.length();
-    return mul(closest_sphere->color, ComputeLighting(point, normal));
+    return std::pair<std::optional<Sphere>, double>(closest_sphere, closest_t);
 }
-
 
 std::pair<double, double> Painter::IntersectRaySphere(
     vec3 origin, vec3 pixel_viewport_pos, Sphere sphere) {
@@ -125,6 +132,7 @@ std::pair<double, double> Painter::IntersectRaySphere(
     intersections.second = (-b - sqrt(discriminant)) / (2 * a);
     return intersections;
 }
+
 
 vec3 Painter::CanvasToViewport(Vec2 pixel_position) {
     return (vec3){

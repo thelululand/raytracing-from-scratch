@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 
 #include "util.h"
 #include "scene.h"
@@ -30,6 +31,10 @@ class Painter {
         
         // Returns a color of the ray tracing result.
         Color TraceRay(vec3 origin, vec3 viewport_position, double t_min, double t_max);
+
+        // Returns a sphere and closest_t if the ray intersects with spheres. 
+        std::pair<std::optional<Sphere>, double> ClosestIntersection(
+            vec3 origin, vec3 pixel_viewport_pos, double t_min, double t_max);
 
         // Returns an intersection between the ray and the sphere.
         std::pair<double, double> IntersectRaySphere(vec3 origin, vec3 pixel_viewport_pos, Sphere sphere);
