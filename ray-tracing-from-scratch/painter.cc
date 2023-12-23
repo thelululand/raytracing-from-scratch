@@ -147,10 +147,20 @@ double Painter::ComputeLighting(vec3 point, vec3 normal, vec3 inverse_ray, doubl
             intensity += light.intensity;
         } else {
             vec3 light_direction;
+            double t_max;
             if (light.type == POINT) {
                 light_direction = light.position - point;
+                t_max = 1;
             } else {
                 light_direction = light.direction;
+                t_max = std::numeric_limits<double>::max();
+            }
+
+            // Shadow check
+            auto intersection = ClosestIntersection(point, light_direction, /*t_min=*/0.001, t_max);
+            std::optional<Sphere> shadow_sphere = intersection.first;
+            if (shadow_sphere.has_value()) {
+                continue;
             }
             
             // Diffuse reflection.
