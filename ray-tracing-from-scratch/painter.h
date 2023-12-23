@@ -30,7 +30,7 @@ class Painter {
         void FetchImage();
         
         // Returns a color of the ray tracing result.
-        Color TraceRay(vec3 origin, vec3 viewport_position, double t_min, double t_max);
+        Color TraceRay(vec3 origin, vec3 viewport_position, double t_min, double t_max, int recursion_depth = 3);
 
         // Returns a sphere and closest_t if the ray intersects with spheres. 
         std::pair<std::optional<Sphere>, double> ClosestIntersection(

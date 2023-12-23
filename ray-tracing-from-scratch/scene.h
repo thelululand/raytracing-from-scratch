@@ -9,6 +9,7 @@ struct Sphere {
     vec3 center;
     Color color;
     double specular = -1;
+    double reflective;
     std::string name;
 };
 

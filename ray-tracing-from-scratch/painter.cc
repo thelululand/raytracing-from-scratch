@@ -19,6 +19,14 @@ Color mul(double i, Color color) {
     return mul(color, i);
 }
 
+Color add(Color x, Color y) {
+    return (Color){x.r + x.r, x.g + y.g, x.b + y.b};
+}
+
+vec3 ReflectRay(vec3 ray, vec3 normal) {
+    return (2 * normal * dot(normal, ray)) - ray;
+}
+
 } // namespace
 
 
@@ -74,7 +82,7 @@ void Painter::DebugTraceRay(vec3 pixel_viewport_pos) {
 }
 
 Color Painter::TraceRay(
-    vec3 origin, vec3 pixel_viewport_pos, double t_min, double t_max) {
+    vec3 origin, vec3 pixel_viewport_pos, double t_min, double t_max, int recursion_depth) {
     auto intersection = ClosestIntersection(origin, pixel_viewport_pos, t_min, t_max);
     std::optional<Sphere> closest_sphere = intersection.first;
     double closest_t = intersection.second;
@@ -84,7 +92,17 @@ Color Painter::TraceRay(
     vec3 point = origin + closest_t *  pixel_viewport_pos; // intersection
     vec3 normal = point - closest_sphere->center; 
     normal = normal / normal.length();
-    return mul(closest_sphere->color, ComputeLighting(point, normal, -pixel_viewport_pos, closest_sphere->specular));
+    Color local_color = mul(closest_sphere->color,
+        ComputeLighting(point, normal, -pixel_viewport_pos, closest_sphere->specular));
+
+    // Compute reflections
+    double reflective = closest_sphere->reflective;
+    if (recursion_depth <= 0 or reflective <= 0) {
+        return local_color;
+    }
+    vec3 reflection = ReflectRay(-pixel_viewport_pos, normal);
+    Color reflected_color = TraceRay(point, reflection, /*t_min=*/0.001, t_max, recursion_depth - 1);
+    return add(mul(local_color, (1 - reflective)), mul(reflected_color, reflective));
 }
 
 std::pair<std::optional<Sphere>, double> Painter::ClosestIntersection(
@@ -171,7 +189,7 @@ double Painter::ComputeLighting(vec3 point, vec3 normal, vec3 inverse_ray, doubl
 
             // Specular reflection.
             if (specular != -1) {
-                vec3 reflection = 2 * normal * dot(normal, light_direction) - light_direction;
+                vec3 reflection = ReflectRay(light_direction, normal);
                 double ref_dot_inv_ray = dot(reflection, inverse_ray);
                 if (ref_dot_inv_ray > 0) {
                     intensity +=

@@ -21,6 +21,7 @@ int main() {
     red_sphere.color = (Color){255, 0, 0}; // red
     red_sphere.center = vec3(0.0f, -1.0f, 3.0f);
     red_sphere.specular = 500; // Shiny
+    red_sphere.reflective = 0.2;
     scene.spheres.push_back(red_sphere);
 
     Sphere blue_sphere;
@@ -29,6 +30,7 @@ int main() {
     blue_sphere.color = (Color){0, 0, 255}; // blue
     blue_sphere.center = vec3(2.0f, 0.0f, 4.0f);
     blue_sphere.specular = 500; // Shiny
+    blue_sphere.reflective = 0.3;
     scene.spheres.push_back(blue_sphere);
 
     Sphere green_sphere;
@@ -37,6 +39,7 @@ int main() {
     green_sphere.color = (Color){0, 255, 0}; // green
     green_sphere.center = vec3(-2.0f, 0.0f, 4.0f);
     green_sphere.specular = 10; // Somewhat shiny
+    green_sphere.reflective = 0.4;
     scene.spheres.push_back(green_sphere);
 
     Sphere sphere4;
